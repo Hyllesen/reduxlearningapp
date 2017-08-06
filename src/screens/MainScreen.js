@@ -7,6 +7,9 @@ import {
   Image,
   TouchableWithoutFeedback
 } from "react-native";
+import PropTypes from "prop-types";
+
+const APIURL = "https://randomuser.me/api/?results=25";
 
 export default class MainScreen extends Component {
   static navigationOptions = {
@@ -26,7 +29,7 @@ export default class MainScreen extends Component {
 
   async fetchRandomUsers() {
     try {
-      const response = await fetch("https://randomuser.me/api/?results=25");
+      const response = await fetch(APIURL);
       const responseJson = await response.json();
       this.setState({ people: responseJson.results });
       console.log(responseJson);
@@ -37,15 +40,16 @@ export default class MainScreen extends Component {
 
   render() {
     const { navigate } = this.props.navigation;
+    const { containerStyle, listItemStyle, nameStyle } = styles;
     return (
-      <View style={styles.container}>
+      <View style={containerStyle}>
         <FlatList
           data={this.state.people}
           keyExtractor={item => item.email}
           renderItem={({ item }) =>
             <TouchableWithoutFeedback onPress={() => navigate("Profile", item)}>
-              <View style={styles.listItem}>
-                <Text style={styles.nameStyle}>
+              <View style={listItemStyle}>
+                <Text style={nameStyle}>
                   {item.name.first} {item.name.last}
                 </Text>
                 <Image
@@ -60,15 +64,18 @@ export default class MainScreen extends Component {
   }
 }
 
+MainScreen.propTypes = {
+  navigation: PropTypes.object.isRequired
+};
+
 const styles = StyleSheet.create({
-  container: {
+  containerStyle: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F5FCFF",
-    paddingTop: 50
+    backgroundColor: "#F5FCFF"
   },
-  listItem: {
+  listItemStyle: {
     flex: 1,
     alignItems: "center",
     marginBottom: 10
